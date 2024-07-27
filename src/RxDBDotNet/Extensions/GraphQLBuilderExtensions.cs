@@ -91,13 +91,12 @@ public static class GraphQLBuilderExtensions
         where TDocument : class, IReplicatedDocument
     {
         var graphQLTypeName = GetGraphQLTypeName<TDocument>();
-        return builder.AddCheckpointInputType<TDocument>(graphQLTypeName)
+        return builder.AddCheckpointInputType(graphQLTypeName)
             .AddDocumentPullBulkType<TDocument>(graphQLTypeName)
             .AddDocumentPushRowInputType<TDocument>(graphQLTypeName);
     }
 
-    private static IRequestExecutorBuilder AddCheckpointInputType<TDocument>(this IRequestExecutorBuilder builder, string graphQLTypeName)
-        where TDocument : class, IReplicatedDocument
+    private static IRequestExecutorBuilder AddCheckpointInputType(this IRequestExecutorBuilder builder, string graphQLTypeName)
     {
         var checkpointInputTypeName = $"{graphQLTypeName}InputCheckpoint";
 

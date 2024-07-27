@@ -28,25 +28,21 @@ public abstract class BaseDocumentRepository<TDocument>(IEventPublisher eventPub
     public abstract Task<TDocument?> GetDocumentByIdAsync(Guid id, CancellationToken cancellationToken);
 
     /// <inheritdoc/>
-    public async Task<TDocument> CreateDocumentAsync(TDocument document, CancellationToken cancellationToken)
+    public async Task CreateDocumentAsync(TDocument newDocument, CancellationToken cancellationToken)
     {
-        var createdDocument = await CreateDocumentInternalAsync(document, cancellationToken).ConfigureAwait(false);
-        _pendingEvents.Add(createdDocument);
-        return createdDocument;
+        _pendingEvents.Add(await CreateDocumentInternalAsync(newDocument, cancellationToken).ConfigureAwait(false));
     }
 
     /// <inheritdoc/>
-    public async Task<TDocument> UpdateDocumentAsync(TDocument document, CancellationToken cancellationToken)
+    public async Task UpdateDocumentAsync(TDocument updatedDocument, CancellationToken cancellationToken)
     {
-        var updatedDocument = await UpdateDocumentInternalAsync(document, cancellationToken).ConfigureAwait(false);
-        _pendingEvents.Add(updatedDocument);
-        return updatedDocument;
+        _pendingEvents.Add(await UpdateDocumentInternalAsync(updatedDocument, cancellationToken).ConfigureAwait(false));
     }
 
     /// <inheritdoc/>
-    public async Task MarkAsDeletedAsync(Guid id, CancellationToken cancellationToken)
+    public async Task MarkAsDeletedAsync(TDocument softDeletedDocument, CancellationToken cancellationToken)
     {
-        var deletedDocument = await MarkAsDeletedInternalAsync(id, cancellationToken).ConfigureAwait(false);
+        var deletedDocument = await MarkAsDeletedInternalAsync(softDeletedDocument, cancellationToken).ConfigureAwait(false);
         if (deletedDocument != null)
         {
             _pendingEvents.Add(deletedDocument);
@@ -74,7 +70,7 @@ public abstract class BaseDocumentRepository<TDocument>(IEventPublisher eventPub
     }
 
     /// <inheritdoc/>
-    public abstract bool AreDocumentsEqual(TDocument doc1, TDocument doc2);
+    public abstract bool AreDocumentsEqual(TDocument existingDocument, TDocument assumedMasterState);
 
     /// <summary>
     /// Internal method to create a document in the repository.
@@ -95,10 +91,10 @@ public abstract class BaseDocumentRepository<TDocument>(IEventPublisher eventPub
     /// <summary>
     /// Internal method to mark a document as deleted in the repository.
     /// </summary>
-    /// <param name="id">The ID of the document to mark as deleted.</param>
+    /// <param name="document">The document to mark as deleted.</param>
     /// <param name="cancellationToken">A token to cancel the operation if needed.</param>
     /// <returns>The deleted document, or null if the document was not found.</returns>
-    protected abstract Task<TDocument?> MarkAsDeletedInternalAsync(Guid id, CancellationToken cancellationToken);
+    protected abstract Task<TDocument> MarkAsDeletedInternalAsync(TDocument document, CancellationToken cancellationToken);
 
     /// <summary>
     /// Internal method to save changes to the underlying data store.

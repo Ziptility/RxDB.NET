@@ -206,7 +206,7 @@ public sealed class MutationResolver<TDocument>(IDocumentRepository<TDocument> r
         {
             // Handle soft deletes as per RxDB protocol
             // Documents are never physically deleted, only marked as deleted
-            await repository.MarkAsDeletedAsync(update.Id, cancellationToken).ConfigureAwait(false);
+            await repository.MarkAsDeletedAsync(update, cancellationToken).ConfigureAwait(false);
         }
         else
         {

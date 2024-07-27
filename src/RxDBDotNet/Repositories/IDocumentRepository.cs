@@ -71,10 +71,10 @@ public interface IDocumentRepository<TDocument> where TDocument : class, IReplic
     /// <item><description>Handle potential conflicts if a document with the same ID already exists.</description></item>
     /// </list>
     /// </remarks>
-    /// <param name="document">The document to create. Its ID should already be set.</param>
+    /// <param name="newDocument">The document that was created by the client.</param>
     /// <param name="cancellationToken">A token to cancel the operation if needed.</param>
     /// <returns>The created document, potentially with updated metadata.</returns>
-    Task<TDocument> CreateDocumentAsync(TDocument document, CancellationToken cancellationToken);
+    Task CreateDocumentAsync(TDocument newDocument, CancellationToken cancellationToken);
 
     /// <summary>
     /// Updates an existing document in the repository.
@@ -88,10 +88,10 @@ public interface IDocumentRepository<TDocument> where TDocument : class, IReplic
     /// <item><description>Update any necessary metadata (e.g., modification timestamps).</description></item>
     /// </list>
     /// </remarks>
-    /// <param name="document">The document with updated information. Its ID identifies the document to update.</param>
+    /// <param name="updatedDocument">The document that was updated by the client.</param>
     /// <param name="cancellationToken">A token to cancel the operation if needed.</param>
     /// <returns>The updated document, potentially with refreshed metadata.</returns>
-    Task<TDocument> UpdateDocumentAsync(TDocument document, CancellationToken cancellationToken);
+    Task UpdateDocumentAsync(TDocument updatedDocument, CancellationToken cancellationToken);
 
     /// <summary>
     /// Marks a document as deleted without physically removing it from the repository.
@@ -106,10 +106,10 @@ public interface IDocumentRepository<TDocument> where TDocument : class, IReplic
     /// <item><description>Handle scenarios where the document might not exist.</description></item>
     /// </list>
     /// </remarks>
-    /// <param name="id">The unique identifier of the document to mark as deleted.</param>
+    /// <param name="softDeletedDocument">The document to mark as deleted.</param>
     /// <param name="cancellationToken">A token to cancel the operation if needed.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
-    Task MarkAsDeletedAsync(Guid id, CancellationToken cancellationToken);
+    Task MarkAsDeletedAsync(TDocument softDeletedDocument, CancellationToken cancellationToken);
 
     /// <summary>
     /// Compares two documents to determine if they are equal in terms of their content.
@@ -124,10 +124,10 @@ public interface IDocumentRepository<TDocument> where TDocument : class, IReplic
     /// <item><description>Ensure the comparison is performant, especially for large documents or high-frequency operations.</description></item>
     /// </list>
     /// </remarks>
-    /// <param name="doc1">The first document to compare.</param>
-    /// <param name="doc2">The second document to compare.</param>
+    /// <param name="existingDocument">The document that exists on the master.</param>
+    /// <param name="assumedMasterState">The assumed state of the document on the master before the push.</param>
     /// <returns>True if the documents are considered equal, false otherwise.</returns>
-    bool AreDocumentsEqual(TDocument doc1, TDocument doc2);
+    bool AreDocumentsEqual(TDocument existingDocument, TDocument assumedMasterState);
 
     /// <summary>
     /// Saves all changes made in the repository as an atomic operation.

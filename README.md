@@ -1,4 +1,4 @@
-# RxDBDotNet
+﻿# RxDBDotNet
 
 <p align="left">
   <a href="https://www.nuget.org/packages/RxDBDotNet/" style="text-decoration:none;">
@@ -200,6 +200,14 @@ Here's a step-by-step guide to get you started with RxDBDotNet:
      }
    }
    ```
+
+## Sample Application
+
+For a more comprehensive example of RxDBDotNet in action, check out our [LiveDocs sample application](SAMPLE_APP.md). This .NET Aspire-based app demonstrates pulling, pushing, and subscription functionalities, showcasing how to integrate RxDBDotNet with Entity Framework Core in a real-world scenario.
+
+The sample app provides valuable insights into structuring your project, implementing repositories, and setting up GraphQL endpoints using RxDBDotNet. It's an excellent resource for understanding how all the pieces fit together in a practical application.
+
+[Learn how to run the LiveDocs sample app →](example/SAMPLE_APP.md)
 
 ## Features
 

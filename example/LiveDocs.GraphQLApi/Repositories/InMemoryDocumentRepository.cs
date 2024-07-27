@@ -111,7 +111,7 @@ public sealed class InMemoryDocumentRepository<TDocument>(IEventPublisher eventP
     }
 
     /// <inheritdoc/>
-    protected override Task<TDocument?> MarkAsDeletedInternalAsync(Guid id, CancellationToken cancellationToken)
+    protected override Task<TDocument?> MarkAsDeletedInternalAsync(TDocument id, CancellationToken cancellationToken)
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
         _lock.EnterWriteLock();
@@ -141,7 +141,7 @@ public sealed class InMemoryDocumentRepository<TDocument>(IEventPublisher eventP
     }
 
     /// <inheritdoc/>
-    public override bool AreDocumentsEqual(TDocument doc1, TDocument doc2)
+    public override bool AreDocumentsEqual(TDocument existingDocument, TDocument assumedMasterState)
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
         var type = typeof(TDocument);
@@ -154,8 +154,8 @@ public sealed class InMemoryDocumentRepository<TDocument>(IEventPublisher eventP
                 continue; // Skip UpdatedAt for comparison
             }
 
-            var value1 = property.GetValue(doc1);
-            var value2 = property.GetValue(doc2);
+            var value1 = property.GetValue(existingDocument);
+            var value2 = property.GetValue(assumedMasterState);
 
             if (!Equals(value1, value2))
             {

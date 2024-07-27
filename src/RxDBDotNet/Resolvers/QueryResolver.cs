@@ -72,10 +72,11 @@ public sealed class QueryResolver<TDocument> where TDocument : class, IReplicate
                  d.Id.ToString().CompareTo(checkpointLastDocumentId.ToString()) > 0));
         }
 
-        // Apply projections from the GraphQL context
-        //var projectedQuery = query.Project(context);
+        // When checkpoint is null, no additional filtering is applied by default.
+        // This implicitly includes all documents, effectively starting from the beginning of time.
 
-        // Apply any filters defined by the client in the GraphQL query
+        // Apply any filters defined by the client in the GraphQL query.
+        // For example, the client should exclude deleted documents on the initial sync.
         var filteredQuery = query.Filter(context);
 
         // We order the results to ensure consistent pagination across multiple pulls

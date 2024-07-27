@@ -60,24 +60,25 @@ public class EfDocumentRepository<TDocument, TContext>(TContext context, IEventP
         if (!AreDocumentsEqual(existingDocument, document))
         {
             _context.Entry(existingDocument).CurrentValues.SetValues(document);
-            existingDocument.UpdatedAt = DateTimeOffset.UtcNow;
         }
 
         return existingDocument;
     }
 
     /// <inheritdoc/>
-    protected override async Task<TDocument?> MarkAsDeletedInternalAsync(Guid id, CancellationToken cancellationToken)
+    protected override async Task<TDocument> MarkAsDeletedInternalAsync(TDocument document, CancellationToken cancellationToken)
     {
-        var document = await _context.Set<TDocument>().FindAsync([id], cancellationToken).ConfigureAwait(false);
-        if (document != null)
+        var documentToDelete = await GetDocumentByIdAsync(document.Id, cancellationToken).ConfigureAwait(false);
+
+        if (documentToDelete != null)
         {
-            document.IsDeleted = true;
-            document.UpdatedAt = DateTimeOffset.UtcNow;
-            _context.Update(document);
+            documentToDelete.IsDeleted = true;
+            // this should be set from the updated document from the client
+            //document.UpdatedAt = DateTimeOffset.UtcNow;
+            _context.Update(documentToDelete);
         }
 
-        return document;
+        return documentToDelete;
     }
 
     /// <inheritdoc/>
@@ -98,10 +99,10 @@ public class EfDocumentRepository<TDocument, TContext>(TContext context, IEventP
     }
 
     /// <inheritdoc/>
-    public override bool AreDocumentsEqual(TDocument doc1, TDocument doc2)
+    public override bool AreDocumentsEqual(TDocument existingDocument, TDocument assumedMasterState)
     {
-        var entry1 = _context.Entry(doc1);
-        var entry2 = _context.Entry(doc2);
+        var entry1 = _context.Entry(existingDocument);
+        var entry2 = _context.Entry(assumedMasterState);
 
         foreach (var property in entry1.Properties)
         {
