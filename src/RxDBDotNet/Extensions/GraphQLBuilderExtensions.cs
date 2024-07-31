@@ -226,7 +226,7 @@ public static class GraphQLBuilderExtensions
                     var queryResolver = context.Resolver<QueryResolver<TDocument>>();
                     var checkpoint = context.ArgumentValue<Checkpoint?>("checkpoint");
                     var limit = context.ArgumentValue<int>("limit");
-                    var repository = context.Service<IDocumentRepository<TDocument>>();
+                    var repository = context.Service<IDocumentService<TDocument>>();
                     var cancellationToken = context.RequestAborted;
 
                     return queryResolver.PullDocumentsAsync(checkpoint, limit, repository, context,

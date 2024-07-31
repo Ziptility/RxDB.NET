@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using RxDBDotNet.Documents;
 
-namespace LiveDocs.GraphQLApi.Models;
+namespace LiveDocs.GraphQLApi.Models.ReplicatedDocuments;
 
 /// <summary>
 /// Represents a workspace in the LiveDocs system.
@@ -22,7 +22,7 @@ public class Workspace : IReplicatedDocument
     /// </summary>
     [Required]
     [MaxLength(100)]
-    public required string Name { get; set; }
+    public required string Name { get; init; }
 
     /// <summary>
     /// Gets or sets the date and time when the workspace was last updated.

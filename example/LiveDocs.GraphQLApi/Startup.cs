@@ -7,6 +7,7 @@ using RxDBDotNet.Extensions;
 using RxDBDotNet.Repositories;
 using Microsoft.EntityFrameworkCore;
 using LiveDocs.GraphQLApi.Infrastructure;
+using LiveDocs.GraphQLApi.Models.ReplicatedDocuments;
 
 namespace LiveDocs.GraphQLApi;
 
@@ -29,10 +30,10 @@ public class Startup
 
         // Add services to the container
         services.AddProblemDetails()
-            .AddSingleton<IDocumentRepository<Hero>, InMemoryDocumentRepository<Hero>>()
-            .AddScoped<IDocumentRepository<User>, EfDocumentRepository<User, LiveDocsDbContext>>()
-            .AddScoped<IDocumentRepository<Workspace>, EfDocumentRepository<Workspace, LiveDocsDbContext>>()
-            .AddScoped<IDocumentRepository<LiveDoc>, EfDocumentRepository<LiveDoc, LiveDocsDbContext>>();
+            .AddSingleton<IDocumentService<Hero>, InMemoryDocumentService<Hero>>()
+            .AddScoped<IDocumentService<User>, EfDocumentService<User, LiveDocsDbContext>>()
+            .AddScoped<IDocumentService<Workspace>, EfDocumentService<Workspace, LiveDocsDbContext>>()
+            .AddScoped<IDocumentService<LiveDoc>, EfDocumentService<LiveDoc, LiveDocsDbContext>>();
 
         // Configure the GraphQL server
         services.AddGraphQLServer()
@@ -42,7 +43,7 @@ public class Startup
             })
             // Simulate scenario where the library user
             // has already added their own root query type.
-            .AddQueryType<Models.Query>()
+            .AddQueryType<GraphQL.Query>()
             .AddReplicationServer()
             .AddReplicatedDocument<Hero>()
             .AddReplicatedDocument<User>()

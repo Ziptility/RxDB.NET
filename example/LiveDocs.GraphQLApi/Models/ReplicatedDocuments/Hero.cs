@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace LiveDocs.GraphQLApi.Models;
+namespace LiveDocs.GraphQLApi.Models.ReplicatedDocuments;
 
 public class Hero : ReplicatedDocument
 {

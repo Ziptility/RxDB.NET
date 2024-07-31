@@ -1,6 +1,6 @@
 ﻿using RxDBDotNet.Documents;
 
-namespace LiveDocs.GraphQLApi.Models;
+namespace LiveDocs.GraphQLApi.Models.ReplicatedDocuments;
 
 /// <summary>
 /// Represents a live, collaborative document within the LiveDocs system.

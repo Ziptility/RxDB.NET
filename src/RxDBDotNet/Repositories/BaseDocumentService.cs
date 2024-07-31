@@ -13,7 +13,7 @@ namespace RxDBDotNet.Repositories;
 /// </remarks>
 /// <param name="eventPublisher">The event publisher used to publish document change events.</param>
 /// <param name="logger">The logger used for logging operations and errors.</param>
-public abstract class BaseDocumentRepository<TDocument>(IEventPublisher eventPublisher, ILogger<BaseDocumentRepository<TDocument>> logger) : IDocumentRepository<TDocument>
+public abstract class BaseDocumentService<TDocument>(IEventPublisher eventPublisher, ILogger<BaseDocumentService<TDocument>> logger) : IDocumentService<TDocument>
     where TDocument : class, IReplicatedDocument
 {
     private readonly List<TDocument> _pendingEvents = [];
@@ -92,7 +92,7 @@ public abstract class BaseDocumentRepository<TDocument>(IEventPublisher eventPub
     /// <param name="document">The document to mark as deleted.</param>
     /// <param name="cancellationToken">A token to cancel the operation if needed.</param>
     /// <returns>The deleted document, or null if the document was not found.</returns>
-    protected abstract Task<TDocument> MarkAsDeletedInternalAsync(TDocument document, CancellationToken cancellationToken);
+    protected abstract Task MarkAsDeletedInternalAsync(TDocument document, CancellationToken cancellationToken);
 
     /// <summary>
     /// Internal method to save changes to the underlying data store.

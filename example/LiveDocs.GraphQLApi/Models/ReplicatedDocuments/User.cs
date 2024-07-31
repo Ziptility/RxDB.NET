@@ -1,4 +1,6 @@
-﻿namespace LiveDocs.GraphQLApi.Models;
+﻿using LiveDocs.GraphQLApi.Models.Shared;
+
+namespace LiveDocs.GraphQLApi.Models.ReplicatedDocuments;
 
 /// <summary>
 /// Represents a user of the LiveDocs system.

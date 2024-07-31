@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using LiveDocs.GraphQLApi.Models;
+using LiveDocs.GraphQLApi.Models.ReplicatedDocuments;
 
 namespace LiveDocs.GraphQLApi.Data
 {

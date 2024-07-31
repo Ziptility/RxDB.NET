@@ -16,7 +16,7 @@ namespace LiveDocs.GraphQLApi.Repositories;
 /// </remarks>
 /// <param name="eventPublisher">The event publisher used to publish document change events.</param>
 /// <param name="logger">The logger to use for logging operations and errors.</param>
-public sealed class InMemoryDocumentRepository<TDocument>(IEventPublisher eventPublisher, ILogger<InMemoryDocumentRepository<TDocument>> logger) : BaseDocumentRepository<TDocument>(eventPublisher, logger), IDisposable
+public sealed class InMemoryDocumentService<TDocument>(IEventPublisher eventPublisher, ILogger<InMemoryDocumentService<TDocument>> logger) : BaseDocumentService<TDocument>(eventPublisher, logger), IDisposable
     where TDocument : class, IReplicatedDocument
 {
     private readonly ConcurrentDictionary<Guid, TDocument> _documents = new();
@@ -111,7 +111,7 @@ public sealed class InMemoryDocumentRepository<TDocument>(IEventPublisher eventP
     }
 
     /// <inheritdoc/>
-    protected override Task<TDocument?> MarkAsDeletedInternalAsync(TDocument id, CancellationToken cancellationToken)
+    protected override Task MarkAsDeletedInternalAsync(TDocument id, CancellationToken cancellationToken)
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
         _lock.EnterWriteLock();

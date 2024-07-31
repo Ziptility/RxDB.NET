@@ -1,7 +1,7 @@
-﻿using RxDBDotNet.Documents;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using RxDBDotNet.Documents;
 
-namespace LiveDocs.GraphQLApi.Models;
+namespace LiveDocs.GraphQLApi.Models.ReplicatedDocuments;
 
 /// <summary>
 ///     Base class for a document that is replicated via RxDBDotNet.

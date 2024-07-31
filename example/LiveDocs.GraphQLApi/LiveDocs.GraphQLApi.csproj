@@ -37,4 +37,8 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\Storage\" />
+  </ItemGroup>
+
 </Project>

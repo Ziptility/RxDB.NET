@@ -12,8 +12,8 @@ namespace RxDBDotNet.Resolvers;
 /// <remarks>
 /// Initializes a new instance of the MutationResolver class.
 /// </remarks>
-/// <param name="repository">The document repository to be used for data access.</param>
-public sealed class MutationResolver<TDocument>(IDocumentRepository<TDocument> repository) where TDocument : class, IReplicatedDocument
+/// <param name="service">The document repository to be used for data access.</param>
+public sealed class MutationResolver<TDocument>(IDocumentService<TDocument> service) where TDocument : class, IReplicatedDocument
 {
     /// <summary>
     /// Pushes a set of documents to the server and handles any conflicts.
@@ -81,7 +81,7 @@ public sealed class MutationResolver<TDocument>(IDocumentRepository<TDocument> r
 
             // Fetch the current state of the document from the repository
             // This is crucial for detecting conflicts as per the RxDB protocol
-            var existing = await repository.GetDocumentByIdAsync(document.NewDocumentState.Id, cancellationToken)
+            var existing = await service.GetDocumentByIdAsync(document.NewDocumentState.Id, cancellationToken)
                 .ConfigureAwait(false);
 
             if (existing != null)
@@ -115,7 +115,7 @@ public sealed class MutationResolver<TDocument>(IDocumentRepository<TDocument> r
     {
         // Check if the assumed master state matches the current state in the repository
         // This is a key part of the RxDB conflict detection mechanism
-        if (document.AssumedMasterState == null || !repository.AreDocumentsEqual(existing, document.AssumedMasterState))
+        if (document.AssumedMasterState == null || !service.AreDocumentsEqual(existing, document.AssumedMasterState))
         {
             // Conflict detected: The document has been modified since the client's last sync
             conflicts.Add(existing);
@@ -170,7 +170,7 @@ public sealed class MutationResolver<TDocument>(IDocumentRepository<TDocument> r
             // Create new documents
             foreach (var create in creates)
             {
-                await repository.CreateDocumentAsync(create, cancellationToken).ConfigureAwait(false);
+                await service.CreateDocumentAsync(create, cancellationToken).ConfigureAwait(false);
             }
 
             // Update existing documents
@@ -181,7 +181,7 @@ public sealed class MutationResolver<TDocument>(IDocumentRepository<TDocument> r
 
             // Commit all changes in a single transaction
             // This ensures atomicity of the entire operation, a key requirement of the RxDB protocol
-            await repository.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            await service.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
             // If we reach here, all changes were applied successfully
             return [];
@@ -206,12 +206,12 @@ public sealed class MutationResolver<TDocument>(IDocumentRepository<TDocument> r
         {
             // Handle soft deletes as per RxDB protocol
             // Documents are never physically deleted, only marked as deleted
-            await repository.MarkAsDeletedAsync(update, cancellationToken).ConfigureAwait(false);
+            await service.MarkAsDeletedAsync(update, cancellationToken).ConfigureAwait(false);
         }
         else
         {
             // Update the existing document
-            await repository.UpdateDocumentAsync(update, cancellationToken).ConfigureAwait(false);
+            await service.UpdateDocumentAsync(update, cancellationToken).ConfigureAwait(false);
         }
     }
 }
