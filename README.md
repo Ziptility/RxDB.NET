@@ -94,7 +94,7 @@ Here's a step-by-step guide to get you started with RxDBDotNet:
 
    // Add services to the container
    builder.Services
-       .AddSingleton<IDocumentRepository<Hero>, HeroRepository>();
+       .AddScoped<IDocumentRepository<Hero>, HeroRepository>();
 
    // Configure the GraphQL server
    builder.Services.AddGraphQLServer()

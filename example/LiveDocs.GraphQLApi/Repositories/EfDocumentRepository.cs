@@ -70,7 +70,7 @@ public class EfDocumentRepository<TDocument, TContext>(TContext context, IEventP
     {
         var documentToDelete = await GetDocumentByIdAsync(document.Id, cancellationToken).ConfigureAwait(false);
 
-        if (documentToDelete != null)
+        if (documentToDelete != null) 
         {
             documentToDelete.IsDeleted = true;
             // this should be set from the updated document from the client

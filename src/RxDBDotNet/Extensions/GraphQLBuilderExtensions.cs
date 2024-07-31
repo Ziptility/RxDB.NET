@@ -31,11 +31,9 @@ public static class GraphQLBuilderExtensions
     {
         ArgumentNullException.ThrowIfNull(builder);
 
-        builder.Services.AddSingleton<IEventPublisher, DefaultEventPublisher>();
+        builder.Services.AddScoped<IEventPublisher, DefaultEventPublisher>();
 
-        // Add projections and filtering support in the correct order
-        builder.AddProjections()
-            .AddFiltering();
+        builder.AddFiltering();
 
         // Ensure Query, Mutation, and Subscription types exist
         EnsureRootTypesExist(builder);

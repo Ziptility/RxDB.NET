@@ -43,10 +43,8 @@ public abstract class BaseDocumentRepository<TDocument>(IEventPublisher eventPub
     public async Task MarkAsDeletedAsync(TDocument softDeletedDocument, CancellationToken cancellationToken)
     {
         var deletedDocument = await MarkAsDeletedInternalAsync(softDeletedDocument, cancellationToken).ConfigureAwait(false);
-        if (deletedDocument != null)
-        {
-            _pendingEvents.Add(deletedDocument);
-        }
+
+        _pendingEvents.Add(deletedDocument);
     }
 
     /// <inheritdoc/>
