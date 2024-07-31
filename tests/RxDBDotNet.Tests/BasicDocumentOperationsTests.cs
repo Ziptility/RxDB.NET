@@ -26,16 +26,13 @@ public class BasicDocumentOperationsTests(ITestOutputHelper output) : TestBase(o
             NewDocumentState = newWorkspace,
         };
 
-        var pushWorkspaceInputGql = new PushWorkspaceInputGql
+        var pushWorkspaceInputGql = new List<WorkspaceInputPushRowGql?>
         {
-            WorkspacePushRow = new List<WorkspaceInputPushRowGql?>
-            {
-                workspaceInput,
-            },
+            workspaceInput,
         };
 
         var createWorkspace =
-            new MutationQueryBuilderGql().WithPushWorkspace(new PushWorkspacePayloadQueryBuilderGql().WithAllFields(), pushWorkspaceInputGql);
+            new MutationQueryBuilderGql().WithPushWorkspace(new WorkspaceQueryBuilderGql().WithAllFields(), pushWorkspaceInputGql);
 
         // Act
         var response = await HttpClient.PostGqlMutationAsync(createWorkspace);
@@ -43,7 +40,7 @@ public class BasicDocumentOperationsTests(ITestOutputHelper output) : TestBase(o
         // Assert
         response.Errors.Should()
             .BeNullOrEmpty();
-        response.Data.PushWorkspace?.Workspace.Should()
+        response.Data.PushWorkspace?.Should()
             .BeNullOrEmpty();
 
         // Verify the workspace exists in the database
@@ -74,5 +71,40 @@ public class BasicDocumentOperationsTests(ITestOutputHelper output) : TestBase(o
 
         response.Data.PullWorkspace?.Documents.Should()
             .HaveCount(1);
+    }
+
+    [Fact]
+    public async Task ItShouldHandleMultiplePullsFollowedByAPush()
+    {
+        // Act
+        var response = await PushAndPullDocumentAsync();
+        var response2 = await PushAndPullDocumentAsync();
+        var response3 = await PushAndPullDocumentAsync();
+
+        // Assert
+        response.Errors.Should()
+            .BeNullOrEmpty();
+        response2.Errors.Should()
+            .BeNullOrEmpty();
+        response3.Errors.Should()
+            .BeNullOrEmpty();
+    }
+
+    private async Task<GqlQueryResponse> PushAndPullDocumentAsync()
+    {
+        // Push a document
+        var newWorkspace = await HttpClient.CreateNewWorkspaceAsync();
+
+        // Pull a document
+        var query = new QueryQueryBuilderGql().WithPullWorkspace(new WorkspacePullBulkQueryBuilderGql().WithAllFields()
+            .WithDocuments(new WorkspaceQueryBuilderGql().WithAllFields(), new WorkspaceFilterInputGql
+            {
+                Id = new UuidOperationFilterInputGql
+                {
+                    Eq = newWorkspace.Id?.Value,
+                },
+            }), 10);
+
+        return await HttpClient.PostGqlQueryAsync(query);
     }
 }

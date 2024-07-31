@@ -1,7 +1,9 @@
 ﻿using System.Reflection;
 using HotChocolate.Execution.Configuration;
 using HotChocolate.Language;
+using HotChocolate.Subscriptions;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using RxDBDotNet.Documents;
 using RxDBDotNet.Models;
 using RxDBDotNet.Repositories;
@@ -37,8 +39,6 @@ public static class GraphQLBuilderExtensions
 
         // Ensure Query, Mutation, and Subscription types exist
         EnsureRootTypesExist(builder);
-
-        builder.AddMutationConventions();
 
         return builder.InitializeOnStartup();
     }
@@ -249,6 +249,10 @@ public static class GraphQLBuilderExtensions
 
             descriptor.Name("Mutation")
                 .Field(pushDocumentsName)
+                .UseMutationConvention(new MutationFieldOptions
+                {
+                    Disable = true,
+                })
                 .Type<NonNullType<ListType<NonNullType<ObjectType<TDocument>>>>>()
                 .Argument(pushRowArgName, a => a.Type<ListType<InputObjectType<DocumentPushRow<TDocument>>>>()
                     .Description($"The list of {graphQLTypeName} documents to push to the server."))
@@ -256,10 +260,11 @@ public static class GraphQLBuilderExtensions
                 .Resolve(context =>
                 {
                     var mutation = context.Resolver<MutationResolver<TDocument>>();
+                    var repository = context.Service<IDocumentRepository<TDocument>>();
                     var documents = context.ArgumentValue<List<DocumentPushRow<TDocument>?>?>(pushRowArgName);
                     var cancellationToken = context.RequestAborted;
 
-                    return mutation.PushDocumentsAsync(documents, cancellationToken);
+                    return mutation.PushDocumentsAsync(documents, repository, cancellationToken);
                 });
         }
     }
@@ -293,7 +298,10 @@ public static class GraphQLBuilderExtensions
                     }
 
                     var subscription = context.Resolver<SubscriptionResolver<TDocument>>();
-                    return subscription.DocumentChangedStream(context.RequestAborted);
+                    var topicEventReceiver = context.Service<ITopicEventReceiver>();
+                    var logger = context.Service<ILogger<SubscriptionResolver<TDocument>>>();
+
+                    return subscription.DocumentChangedStream(topicEventReceiver, logger, context.RequestAborted);
                 });
         }
 
