@@ -17,7 +17,10 @@ namespace LiveDocs.GraphQLApi.Repositories;
 /// <param name="context">The DbContext to use for data access.</param>
 /// <param name="eventPublisher">The event publisher used to publish document change events.</param>
 /// <param name="logger">The logger to use for logging operations and errors.</param>
-public class EfDocumentService<TDocument, TContext>(TContext context, IEventPublisher eventPublisher, ILogger<EfDocumentService<TDocument, TContext>> logger) : BaseDocumentService<TDocument>(eventPublisher, logger)
+public class EfDocumentService<TDocument, TContext>(
+    TContext context,
+    IEventPublisher eventPublisher,
+    ILogger<EfDocumentService<TDocument, TContext>> logger) : BaseDocumentService<TDocument>(eventPublisher, logger)
     where TDocument : class, IReplicatedDocument
     where TContext : DbContext
 {
@@ -77,6 +80,7 @@ public class EfDocumentService<TDocument, TContext>(TContext context, IEventPubl
 
         // this should be set from the updated document from the client
         _context.Update(documentToDelete);
+
 
         return documentToDelete;
     }

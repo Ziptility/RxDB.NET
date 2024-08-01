@@ -30,19 +30,19 @@ public abstract class BaseDocumentService<TDocument>(IEventPublisher eventPublis
     /// <inheritdoc/>
     public async Task CreateDocumentAsync(TDocument newDocument, CancellationToken cancellationToken)
     {
-        _pendingEvents.Add(await CreateDocumentInternalAsync(newDocument, cancellationToken).ConfigureAwait(false));
+        _pendingEvents.Add(await CreateDocumentInternalAsync(newDocument, cancellationToken));
     }
 
     /// <inheritdoc/>
     public async Task UpdateDocumentAsync(TDocument updatedDocument, CancellationToken cancellationToken)
     {
-        _pendingEvents.Add(await UpdateDocumentInternalAsync(updatedDocument, cancellationToken).ConfigureAwait(false));
+        _pendingEvents.Add(await UpdateDocumentInternalAsync(updatedDocument, cancellationToken));
     }
 
     /// <inheritdoc/>
     public async Task MarkAsDeletedAsync(TDocument softDeletedDocument, CancellationToken cancellationToken)
     {
-        var deletedDocument = await MarkAsDeletedInternalAsync(softDeletedDocument, cancellationToken).ConfigureAwait(false);
+        var deletedDocument = await MarkAsDeletedInternalAsync(softDeletedDocument, cancellationToken);
 
         _pendingEvents.Add(deletedDocument);
     }
@@ -50,13 +50,13 @@ public abstract class BaseDocumentService<TDocument>(IEventPublisher eventPublis
     /// <inheritdoc/>
     public async Task SaveChangesAsync(CancellationToken cancellationToken)
     {
-        await SaveChangesInternalAsync(cancellationToken).ConfigureAwait(false);
+        await SaveChangesInternalAsync(cancellationToken);
 
         foreach (var document in _pendingEvents)
         {
             try
             {
-                await eventPublisher.PublishDocumentChangedEventAsync(document, cancellationToken).ConfigureAwait(false);
+                await eventPublisher.PublishDocumentChangedEventAsync(document, cancellationToken);
             }
             catch (Exception ex)
             {

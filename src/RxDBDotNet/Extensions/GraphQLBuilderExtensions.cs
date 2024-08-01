@@ -33,7 +33,7 @@ public static class GraphQLBuilderExtensions
     {
         ArgumentNullException.ThrowIfNull(builder);
 
-        builder.Services.AddScoped<IEventPublisher, DefaultEventPublisher>();
+        builder.Services.AddSingleton<IEventPublisher, DefaultEventPublisher>();
 
         builder.AddFiltering();
 

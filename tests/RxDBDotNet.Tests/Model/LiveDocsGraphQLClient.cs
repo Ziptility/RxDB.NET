@@ -11,7 +11,6 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Text.RegularExpressions;
-using LiveDocs.GraphQLApi.Models.Shared;
 #if !GRAPHQL_GENERATOR_DISABLE_NEWTONSOFT_JSON
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -2556,11 +2555,11 @@ namespace RxDBDotNet.Tests.Model
         }
 
         #if !GRAPHQL_GENERATOR_DISABLE_NEWTONSOFT_JSON
-        [JsonConverter(typeof(QueryBuilderParameterConverter<LiveDocs.GraphQLApi.Models.UserRole>))]
+        [JsonConverter(typeof(QueryBuilderParameterConverter<LiveDocs.GraphQLApi.Models.Shared.UserRole>))]
         #endif
-        public QueryBuilderParameter<UserRole>? Role
+        public QueryBuilderParameter<LiveDocs.GraphQLApi.Models.Shared.UserRole>? Role
         {
-            get => (QueryBuilderParameter<UserRole>?)_role.Value;
+            get => (QueryBuilderParameter<LiveDocs.GraphQLApi.Models.Shared.UserRole>?)_role.Value;
             set => _role = new InputPropertyInfo { Name = "role", Value = value };
         }
 
@@ -3783,38 +3782,38 @@ namespace RxDBDotNet.Tests.Model
         private InputPropertyInfo _nin;
 
         #if !GRAPHQL_GENERATOR_DISABLE_NEWTONSOFT_JSON
-        [JsonConverter(typeof(QueryBuilderParameterConverter<LiveDocs.GraphQLApi.Models.UserRole?>))]
+        [JsonConverter(typeof(QueryBuilderParameterConverter<LiveDocs.GraphQLApi.Models.Shared.UserRole?>))]
         #endif
-        public QueryBuilderParameter<UserRole?>? Eq
+        public QueryBuilderParameter<LiveDocs.GraphQLApi.Models.Shared.UserRole?>? Eq
         {
-            get => (QueryBuilderParameter<UserRole?>?)_eq.Value;
+            get => (QueryBuilderParameter<LiveDocs.GraphQLApi.Models.Shared.UserRole?>?)_eq.Value;
             set => _eq = new InputPropertyInfo { Name = "eq", Value = value };
         }
 
         #if !GRAPHQL_GENERATOR_DISABLE_NEWTONSOFT_JSON
-        [JsonConverter(typeof(QueryBuilderParameterConverter<LiveDocs.GraphQLApi.Models.UserRole?>))]
+        [JsonConverter(typeof(QueryBuilderParameterConverter<LiveDocs.GraphQLApi.Models.Shared.UserRole?>))]
         #endif
-        public QueryBuilderParameter<UserRole?>? Neq
+        public QueryBuilderParameter<LiveDocs.GraphQLApi.Models.Shared.UserRole?>? Neq
         {
-            get => (QueryBuilderParameter<UserRole?>?)_neq.Value;
+            get => (QueryBuilderParameter<LiveDocs.GraphQLApi.Models.Shared.UserRole?>?)_neq.Value;
             set => _neq = new InputPropertyInfo { Name = "neq", Value = value };
         }
 
         #if !GRAPHQL_GENERATOR_DISABLE_NEWTONSOFT_JSON
-        [JsonConverter(typeof(QueryBuilderParameterConverter<ICollection<LiveDocs.GraphQLApi.Models.UserRole>?>))]
+        [JsonConverter(typeof(QueryBuilderParameterConverter<ICollection<LiveDocs.GraphQLApi.Models.Shared.UserRole>?>))]
         #endif
-        public QueryBuilderParameter<ICollection<UserRole>?>? In
+        public QueryBuilderParameter<ICollection<LiveDocs.GraphQLApi.Models.Shared.UserRole>?>? In
         {
-            get => (QueryBuilderParameter<ICollection<UserRole>?>?)_in.Value;
+            get => (QueryBuilderParameter<ICollection<LiveDocs.GraphQLApi.Models.Shared.UserRole>?>?)_in.Value;
             set => _in = new InputPropertyInfo { Name = "in", Value = value };
         }
 
         #if !GRAPHQL_GENERATOR_DISABLE_NEWTONSOFT_JSON
-        [JsonConverter(typeof(QueryBuilderParameterConverter<ICollection<LiveDocs.GraphQLApi.Models.UserRole>?>))]
+        [JsonConverter(typeof(QueryBuilderParameterConverter<ICollection<LiveDocs.GraphQLApi.Models.Shared.UserRole>?>))]
         #endif
-        public QueryBuilderParameter<ICollection<UserRole>?>? Nin
+        public QueryBuilderParameter<ICollection<LiveDocs.GraphQLApi.Models.Shared.UserRole>?>? Nin
         {
-            get => (QueryBuilderParameter<ICollection<UserRole>?>?)_nin.Value;
+            get => (QueryBuilderParameter<ICollection<LiveDocs.GraphQLApi.Models.Shared.UserRole>?>?)_nin.Value;
             set => _nin = new InputPropertyInfo { Name = "nin", Value = value };
         }
 
@@ -4099,7 +4098,7 @@ namespace RxDBDotNet.Tests.Model
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
-        public UserRole Role { get; set; }
+        public LiveDocs.GraphQLApi.Models.Shared.UserRole Role { get; set; }
         public Guid WorkspaceId { get; set; }
         public Guid Id { get; set; }
         public bool? IsDeleted { get; set; }
