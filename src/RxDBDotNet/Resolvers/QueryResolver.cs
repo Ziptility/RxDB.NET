@@ -24,7 +24,7 @@ public sealed class QueryResolver<TDocument> where TDocument : class, IReplicate
     /// </summary>
     /// <param name="checkpoint">The last known checkpoint, or null if this is the initial pull.</param>
     /// <param name="limit">The maximum number of documents to return.</param>
-    /// <param name="service">The document repository to be used for data access.</param>
+    /// <param name="documentService">The document service to be used for data access.</param>
     /// <param name="context">The GraphQL context which contains any filters or projections.</param>
     /// <param name="cancellationToken">A cancellation token that can be used to cancel the work.</param>
     /// <returns>
@@ -41,11 +41,11 @@ public sealed class QueryResolver<TDocument> where TDocument : class, IReplicate
     internal async Task<DocumentPullBulk<TDocument>> PullDocumentsAsync(
         Checkpoint? checkpoint,
         int limit,
-        [Service] IDocumentRepository<TDocument> repository,
+        [Service] IDocumentService<TDocument> documentService,
         IResolverContext context,
         CancellationToken cancellationToken)
     {
-        var query = service.GetQueryableDocuments();
+        var query = documentService.GetQueryableDocuments();
 
         // If a checkpoint is provided, we use it to filter the documents.
         // This is crucial for the efficiency of the replication process, as it allows
@@ -94,7 +94,7 @@ public sealed class QueryResolver<TDocument> where TDocument : class, IReplicate
         // Limit the query to the specified number of documents
         var limitedQuery = orderedQuery.Take(limit);
 
-        var documents = await service.ExecuteQueryAsync(limitedQuery, cancellationToken).ConfigureAwait(false);
+        var documents = await documentService.ExecuteQueryAsync(limitedQuery, cancellationToken).ConfigureAwait(false);
 
         // If no documents are returned, we return an empty result with a null checkpoint
         // This signals to the client that there are no more documents to pull

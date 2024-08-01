@@ -20,7 +20,7 @@ public sealed class SubscriptionResolver<TDocument> where TDocument : class, IRe
 {
     /// <summary>
     /// Provides a stream of document changes for subscription.
-    /// This method is the entry point for GraphQL subscriptions and implements
+    /// This method initializes GraphQL subscriptions and implements
     /// the server-side push mechanism of the RxDB replication protocol.
     /// </summary>
     /// <param name="eventReceiver">The event receiver used for subscribing to document changes.</param>

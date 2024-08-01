@@ -1,14 +1,13 @@
 ﻿using System.Collections.Concurrent;
 using LiveDocs.GraphQLApi.Models;
 using RxDBDotNet.Documents;
-using RxDBDotNet.Repositories;
 using RxDBDotNet.Services;
 
 namespace LiveDocs.GraphQLApi.Repositories;
 
 /// <summary>
-/// An in-memory implementation of IDocumentRepository that simulates a database for testing and prototyping purposes.
-/// This implementation is thread-safe, supports the full IDocumentRepository interface, and follows best practices.
+/// An in-memory implementation of IDocumentService that simulates a database for testing and prototyping purposes.
+/// This implementation is thread-safe, supports the full IDocumentService interface, and follows best practices.
 /// </summary>
 /// <typeparam name="TDocument">The type of document being managed, which must implement IReplicatedDocument.</typeparam>
 /// <remarks>
@@ -111,20 +110,20 @@ public sealed class InMemoryDocumentService<TDocument>(IEventPublisher eventPubl
     }
 
     /// <inheritdoc/>
-    protected override Task MarkAsDeletedInternalAsync(TDocument id, CancellationToken cancellationToken)
+    protected override Task<TDocument> MarkAsDeletedInternalAsync(TDocument document, CancellationToken cancellationToken)
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
         _lock.EnterWriteLock();
         try
         {
-            if (_documents.TryGetValue(id, out var document))
+            if (_documents.TryGetValue(document.Id, out var storedDocument))
             {
-                document.IsDeleted = true;
-                document.UpdatedAt = DateTimeOffset.UtcNow;
-                _documents[id] = document;
-                return Task.FromResult<TDocument?>(document);
+                storedDocument.IsDeleted = true;
+                storedDocument.UpdatedAt = document.UpdatedAt;
+                _documents[document.Id] = storedDocument;
+                return Task.FromResult(storedDocument);
             }
-            return Task.FromResult<TDocument?>(null);
+            throw new InvalidOperationException("Could not find the document to delete");
         }
         finally
         {
@@ -136,7 +135,7 @@ public sealed class InMemoryDocumentService<TDocument>(IEventPublisher eventPubl
     protected override Task SaveChangesInternalAsync(CancellationToken cancellationToken)
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
-        // For in-memory repository, changes are saved immediately, so this is a no-op
+        // For in-memory documentService, changes are saved immediately, so this is a no-op
         return Task.CompletedTask;
     }
 

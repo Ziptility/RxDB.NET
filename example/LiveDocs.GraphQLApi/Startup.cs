@@ -45,7 +45,7 @@ public class Startup
             // has already added their own root query type.
             .AddQueryType<GraphQL.Query>()
             .AddReplicationServer()
-            .RegisterService<IDocumentRepository<Workspace>>()
+            .RegisterService<IDocumentService<Workspace>>()
             .AddReplicatedDocument<Hero>()
             .AddReplicatedDocument<User>()
             .AddReplicatedDocument<Workspace>()

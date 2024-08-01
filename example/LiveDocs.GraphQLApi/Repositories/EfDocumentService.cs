@@ -1,13 +1,12 @@
 ﻿using LiveDocs.GraphQLApi.Models;
 using Microsoft.EntityFrameworkCore;
 using RxDBDotNet.Documents;
-using RxDBDotNet.Repositories;
 using RxDBDotNet.Services;
 
 namespace LiveDocs.GraphQLApi.Repositories;
 
 /// <summary>
-/// An implementation of IDocumentRepository using Entity Framework Core.
+/// An implementation of IDocumentService using Entity Framework Core.
 /// This class provides optimized database access for document operations required by the RxDB replication protocol.
 /// </summary>
 /// <typeparam name="TDocument">The type of document being managed, which must implement IReplicatedDocument.</typeparam>
@@ -66,18 +65,20 @@ public class EfDocumentService<TDocument, TContext>(TContext context, IEventPubl
     }
 
     /// <inheritdoc/>
-    protected override async Task MarkAsDeletedInternalAsync(TDocument document, CancellationToken cancellationToken)
+    protected override async Task<TDocument> MarkAsDeletedInternalAsync(TDocument document, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(document);
 
-        var documentToDelete = await GetDocumentByIdAsync(document.Id, cancellationToken).ConfigureAwait(false);
+        var documentToDelete = await GetDocumentByIdAsync(document.Id, cancellationToken)
+                                   .ConfigureAwait(false)
+                               ?? throw new InvalidOperationException("Could not find the document to delete");
 
-        if (documentToDelete != null) 
-        {
-            documentToDelete.IsDeleted = true;
-            // this should be set from the updated document from the client
-            _context.Update(documentToDelete);
-        }
+        documentToDelete.IsDeleted = true;
+
+        // this should be set from the updated document from the client
+        _context.Update(documentToDelete);
+
+        return documentToDelete;
     }
 
     /// <inheritdoc/>

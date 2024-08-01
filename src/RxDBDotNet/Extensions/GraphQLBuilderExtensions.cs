@@ -226,10 +226,10 @@ public static class GraphQLBuilderExtensions
                     var queryResolver = context.Resolver<QueryResolver<TDocument>>();
                     var checkpoint = context.ArgumentValue<Checkpoint?>("checkpoint");
                     var limit = context.ArgumentValue<int>("limit");
-                    var repository = context.Service<IDocumentService<TDocument>>();
+                    var documentService = context.Service<IDocumentService<TDocument>>();
                     var cancellationToken = context.RequestAborted;
 
-                    return queryResolver.PullDocumentsAsync(checkpoint, limit, repository, context,
+                    return queryResolver.PullDocumentsAsync(checkpoint, limit, documentService, context,
                         cancellationToken);
                 });
         }
@@ -260,11 +260,11 @@ public static class GraphQLBuilderExtensions
                 .Resolve(context =>
                 {
                     var mutation = context.Resolver<MutationResolver<TDocument>>();
-                    var repository = context.Service<IDocumentRepository<TDocument>>();
+                    var documentService = context.Service<IDocumentService<TDocument>>();
                     var documents = context.ArgumentValue<List<DocumentPushRow<TDocument>?>?>(pushRowArgName);
                     var cancellationToken = context.RequestAborted;
 
-                    return mutation.PushDocumentsAsync(documents, repository, cancellationToken);
+                    return mutation.PushDocumentsAsync(documents, documentService, cancellationToken);
                 });
         }
     }

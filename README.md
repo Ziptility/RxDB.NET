@@ -72,7 +72,7 @@ Here's a step-by-step guide to get you started with RxDBDotNet:
    }
    ```
 
-2. Implement the `IDocumentRepository<T>` interface for your document type:
+2. Implement the `IDocumentService<T>` interface for your document type:
 
    ```csharp
    public class HeroRepository : BaseDocumentRepository<Hero>
@@ -94,7 +94,7 @@ Here's a step-by-step guide to get you started with RxDBDotNet:
 
    // Add services to the container
    builder.Services
-       .AddScoped<IDocumentRepository<Hero>, HeroRepository>();
+       .AddScoped<IDocumentService<Hero>, HeroRepository>();
 
    // Configure the GraphQL server
    builder.Services.AddGraphQLServer()

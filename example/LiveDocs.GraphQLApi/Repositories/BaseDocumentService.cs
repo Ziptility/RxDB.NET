@@ -1,8 +1,8 @@
-﻿using Microsoft.Extensions.Logging;
-using RxDBDotNet.Documents;
+﻿using RxDBDotNet.Documents;
+using RxDBDotNet.Repositories;
 using RxDBDotNet.Services;
 
-namespace RxDBDotNet.Repositories;
+namespace LiveDocs.GraphQLApi.Repositories;
 
 /// <summary>
 /// Provides a base implementation for document repositories with event publishing capabilities.
